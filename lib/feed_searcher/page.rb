@@ -6,10 +6,6 @@ class FeedSearcher
       @page = page
     end
 
-    def html?
-      page.is_a?(Mechanize::Page)
-    end
-
     def feed_urls
       feed_attributes.map {|attribute| attribute["href"] }
     end
@@ -21,7 +17,7 @@ class FeedSearcher
     end
 
     def root
-      page.root
+      Nokogiri.HTML(page.body)
     end
   end
 end
