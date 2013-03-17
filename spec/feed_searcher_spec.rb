@@ -10,7 +10,8 @@ describe FeedSearcher do
             <head>
               <meta charset="UTF-8">
               <link href="http://example.com/rss.atom" rel="alternate" title="example" type="application/atom+xml" />
-              <link href="http://example.com/rss.xml" rel="alternate" title="example" type="application/atom+xml" />
+              <link href="http://rss.example.com/rss.atom" rel="alternate" title="example" type="application/atom+xml" />
+              <link href="/rss.xml" rel="alternate" title="example" type="application/atom+xml" />
             </head>
             <body>
               example
@@ -23,6 +24,7 @@ describe FeedSearcher do
     it "returns feed URLs from given URL" do
       FeedSearcher.search("http://example.com/").should == %w[
         http://example.com/rss.atom
+        http://rss.example.com/rss.atom
         http://example.com/rss.xml
       ]
     end
