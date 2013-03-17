@@ -31,10 +31,10 @@ describe FeedSearcher do
     #   * it recognizes application/atom+xml
     #   * it recognizes application/rdf+xml
     #   * it recognizes application/rss+xml
-    #   * it does not recognizes application/xml
+    #   * it does not recognize application/xml
     #   * it keeps subdomain
     #   * it keeps other domain
-    #   * it converts absolute url
+    #   * it converts relative path to absolute url
     #
     it "returns feed URLs from given URL" do
       FeedSearcher.search("http://example.com/").should == %w[
