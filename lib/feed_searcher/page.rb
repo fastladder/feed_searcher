@@ -13,7 +13,7 @@ class FeedSearcher
     private
 
     def feed_attributes
-      root.xpath("//link[@type='application/rss+xml' or @type='application/atom+xml']")
+      root.xpath("//link[@rel='alternate' and (@type='application/rss+xml' or @type='application/atom+xml' or @type='application/rdf+xml')]")
     end
 
     def root
