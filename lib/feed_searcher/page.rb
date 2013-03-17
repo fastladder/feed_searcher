@@ -1,5 +1,11 @@
 class FeedSearcher
   class Page
+    MIME_TYPES = %w[
+      application/atom+xml
+      application/rdf+xml
+      application/rss+xml
+    ]
+
     attr_reader :page
 
     def initialize(page)
@@ -13,7 +19,11 @@ class FeedSearcher
     private
 
     def feed_attributes
-      root.xpath("//link[@rel='alternate' and (@type='application/rss+xml' or @type='application/atom+xml' or @type='application/rdf+xml')]")
+      root.xpath("//link[@rel='alternate' and (#{types_query})]")
+    end
+
+    def types_query
+      MIME_TYPES.map {|type| "@type='#{type}'" }.join(" or ")
     end
 
     def root
