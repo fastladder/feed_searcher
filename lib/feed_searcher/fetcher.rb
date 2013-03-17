@@ -12,7 +12,7 @@ class FeedSearcher
     end
 
     def fetch
-      Page.new(get)
+      Page.new(url, get)
     end
 
     private
