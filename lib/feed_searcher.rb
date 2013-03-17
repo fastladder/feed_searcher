@@ -1,6 +1,7 @@
 require "feed_searcher/version"
 require "feed_searcher/fetcher"
 require "feed_searcher/page"
+require "uri"
 require "mechanize"
 require "nokogiri"
 
@@ -17,7 +18,7 @@ class FeedSearcher
   end
 
   def search
-    fetch.feed_urls
+    fetch.feed_urls.map {|feed_url| URI.join(url, feed_url).to_s }
   end
 
   private

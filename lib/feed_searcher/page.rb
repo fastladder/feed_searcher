@@ -1,16 +1,13 @@
-require 'uri'
-
 class FeedSearcher
   class Page
-    attr_reader :url, :page
+    attr_reader :page
 
-    def initialize(url, page)
-      @url  = url
+    def initialize(page)
       @page = page
     end
 
     def feed_urls
-      feed_attributes.map {|attribute| URI.join(url, attribute["href"]).to_s }
+      feed_attributes.map {|attribute| attribute["href"] }
     end
 
     private
