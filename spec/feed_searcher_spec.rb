@@ -11,6 +11,7 @@ describe FeedSearcher do
               <meta charset="UTF-8">
               <link href="http://example.com/rss.atom" rel="alternate" title="example" type="application/atom+xml" />
               <link href="http://rss.example.com/rss.atom" rel="alternate" title="example" type="application/atom+xml" />
+              <link href="http://www.example.jp/index.rdf" rel="resource" title="example" type="application/rdf+xml" />
               <link href="/rss.xml" rel="alternate" title="example" type="application/atom+xml" />
             </head>
             <body>
