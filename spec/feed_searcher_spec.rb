@@ -24,6 +24,24 @@ describe FeedSearcher do
           </html>
         EOF
       )
+
+      stub_request(:get, "http://example.com/3").to_return(
+        :content_type => 'application/rss+xml',
+        :body => <<-EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <rss>
+            <channel>
+              <title>title</title>
+              <link>http://exmple.com/</link>
+              <item>
+                <title>item title</title>
+                <link>http://example.com/item</link>
+                <description>item description</description>
+              </item>
+            </channel>
+          </rss>
+        EOF
+      )
     end
 
     # This example makes sure the following specifications.
@@ -44,6 +62,12 @@ describe FeedSearcher do
         http://www.example.com/6
         http://other-example.com/7
         http://example.com/8
+      ]
+    end
+
+    it "I'm the feed" do
+      FeedSearcher.search("http://example.com/3").should == %w[
+        http://example.com/3
       ]
     end
   end

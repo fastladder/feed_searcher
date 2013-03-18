@@ -13,10 +13,16 @@ class FeedSearcher
     end
 
     def feed_urls
-      feed_attributes.map {|attribute| attribute["href"] }
+      urls = []
+      urls << page.uri if is_feed?
+      urls.concat feed_attributes.map {|attribute| attribute["href"] }
     end
 
     private
+
+    def is_feed?
+      root.xpath("contains(' feed RDF rss ', concat(' ', local-name(/*), ' '))")
+    end
 
     def feed_attributes
       root.xpath("//link[@rel='alternate' and (#{types_query})]")
@@ -27,7 +33,11 @@ class FeedSearcher
     end
 
     def root
-      Nokogiri.HTML(page.body)
+      if page.respond_to? :content_type and page.content_type =~ %r[^text/html]
+        Nokogiri.HTML(page.body)
+      else
+        Nokogiri.XML(page.body)
+      end
     end
   end
 end
