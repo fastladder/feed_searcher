@@ -6,6 +6,13 @@ class FeedSearcher
       application/rss+xml
     ]
 
+    FEED_EXTENSIONS = %[
+      .xml
+      .atom
+      .rdf
+      .rss
+    ]
+
     attr_reader :page
 
     def initialize(page)
@@ -14,7 +21,7 @@ class FeedSearcher
 
     def feed_urls
       urls = []
-      urls << page.uri if is_feed?
+      urls << page.uri if feed_content_type? or is_feed?
       urls.concat feed_attributes.map {|attribute| attribute["href"] }
     end
 
@@ -22,6 +29,17 @@ class FeedSearcher
 
     def is_feed?
       root.xpath("contains(' feed RDF rss ', concat(' ', local-name(/*), ' '))")
+    end
+
+    def feed_content_type?
+      content_type = page.response["content-type"]
+      content_type.is_a? String and MIME_TYPES.include? content_type.gsub(/;.*$/, "")
+    end
+
+    def feed_extension?
+      path = page.uri.path
+      extension = File.extname(path)
+      FEED_EXTENSIONS.include? extension
     end
 
     def feed_attributes
@@ -33,11 +51,14 @@ class FeedSearcher
     end
 
     def root
-      if page.respond_to? :content_type and page.content_type =~ %r[^text/html]
-        Nokogiri.HTML(page.body)
-      else
-        Nokogiri.XML(page.body)
+      xml = nil
+      body = page.body
+      if body =~ /\A<\?xml\s/ or feed_content_type? or feed_extension?
+        xml = Nokogiri.XML(body) do |config|
+          config.options = Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NOENT
+        end rescue nil
       end
+      xml or Nokogiri.HTML(body)
     end
   end
 end
