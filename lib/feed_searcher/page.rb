@@ -13,7 +13,12 @@ class FeedSearcher
     end
 
     def feed_urls
-      feed_attributes.map {|attribute| attribute["href"] }
+      feeds = feed_attributes.map {|attribute| attribute["href"] }
+      content_type = page.response["content-type"]
+      if content_type && MIME_TYPES.include?(content_type.gsub(/;.*$/, ""))
+        feeds << page.uri.to_s
+      end
+      feeds
     end
 
     private
