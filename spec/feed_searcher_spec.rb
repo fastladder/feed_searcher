@@ -46,5 +46,16 @@ describe FeedSearcher do
         http://example.com/8
       ]
     end
+
+    it "returns itself if feed URL given" do
+      url = "http://example.com/feed"
+      stub_request(:get, url).to_return(
+        :body => "hello",
+        :headers => {
+          "Content-Type" => "application/atom+xml; charset=utf-8"
+        }
+      )
+      FeedSearcher.search(url).should == [url]
+    end
   end
 end
