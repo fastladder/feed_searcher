@@ -4,25 +4,17 @@ describe FeedSearcher do
   describe ".search" do
     before do
       stub_request(:get, "http://example.com/").to_return(
-        :body => <<-EOF
-          <!DOCTYPE HTML>
-          <html>
-            <head>
-              <meta charset="UTF-8">
-              <link href="http://example.com/1" rel="alternate" type="application/atom+xml" />
-              <link href="http://example.com/2" rel="alternate" type="application/rdf+xml" />
-              <link href="http://example.com/3" rel="alternate" type="application/rss+xml" />
-              <link href="http://example.com/4" rel="alternate" type="application/xml" />
-              <link href="http://example.com/5" rel="resource"  type="application/rss+xml" />
-              <link href="http://www.example.com/6" rel="alternate"  type="application/rss+xml" />
-              <link href="http://other-example.com/7" rel="alternate"  type="application/rss+xml" />
-              <link href="/8" rel="alternate" type="application/rss+xml" />
-            </head>
-            <body>
-              body
-            </body>
-          </html>
-        EOF
+        :body => open(File.expand_path(File.join(File.dirname(__FILE__), "fixtures", "example.html"))).read
+      )
+
+      stub_request(:get, "http://example.com/3").to_return(
+        :content_type => 'application/rss+xml; charset=UTF-8',
+        :body => open(File.expand_path(File.join(File.dirname(__FILE__), "fixtures", "example.rss"))).read
+      )
+
+      stub_request(:get, "http://example.com/1").to_return(
+        :content_type => 'text/plain',
+        :body => open(File.expand_path(File.join(File.dirname(__FILE__), "fixtures", "example.atom"))).read
       )
     end
 
@@ -44,6 +36,18 @@ describe FeedSearcher do
         http://www.example.com/6
         http://other-example.com/7
         http://example.com/8
+      ]
+    end
+
+    it "I'm the feed" do
+      FeedSearcher.search("http://example.com/3").should == %w[
+        http://example.com/3
+      ]
+    end
+
+    it "Feed URL content type is text/plain" do
+      FeedSearcher.search("http://example.com/1").should == %w[
+        http://example.com/1
       ]
     end
   end
