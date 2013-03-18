@@ -1,17 +1,10 @@
 class FeedSearcher
   class Page
-    MIME_TYPES = %w[
-      application/atom+xml
-      application/rdf+xml
-      application/rss+xml
-    ]
-
-    FEED_EXTENSIONS = %[
-      .xml
-      .atom
-      .rdf
-      .rss
-    ]
+    MIME_TYPES = {
+      ".atom" => "application/atom+xml",
+      ".rdf" => "application/rdf+xml",
+      ".rss" => "application/rss+xml",
+    }
 
     attr_reader :page
 
@@ -33,13 +26,13 @@ class FeedSearcher
 
     def feed_content_type?
       content_type = page.response["content-type"]
-      content_type.is_a? String and MIME_TYPES.include? content_type.gsub(/;.*$/, "")
+      content_type.is_a? String and MIME_TYPES.has_value? content_type.gsub(/;.*$/, "")
     end
 
     def feed_extension?
       path = page.uri.path
       extension = File.extname(path)
-      FEED_EXTENSIONS.include? extension
+      MIME_TYPES.has_key? extension
     end
 
     def feed_attributes
@@ -47,7 +40,7 @@ class FeedSearcher
     end
 
     def types_query
-      MIME_TYPES.map {|type| "@type='#{type}'" }.join(" or ")
+      MIME_TYPES.map {|_, type| "@type='#{type}'" }.join(" or ")
     end
 
     def root
