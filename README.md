@@ -1,6 +1,8 @@
 # FeedSearcher
 Search RSS feed URLs from the given URL.
 
+[![Build Status](https://travis-ci.org/fastladder/feed_searcher.png?branch=master)](https://travis-ci.org/fastladder/feed_searcher)
+
 
 ## Installation
 ```
