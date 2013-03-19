@@ -1,10 +1,16 @@
 class FeedSearcher
   class Page
-    MIME_TYPES = {
-      ".atom" => "application/atom+xml",
-      ".rdf" => "application/rdf+xml",
-      ".rss" => "application/rss+xml",
-    }
+    EXTENSIONS = %w[
+      atom
+      rdf
+      rss
+    ]
+
+    MIME_TYPES = %w[
+      application/atom+xml
+      application/rdf+xml
+      application/rss+xml
+    ]
 
     attr_reader :page
 
@@ -14,44 +20,82 @@ class FeedSearcher
 
     def feed_urls
       urls = []
-      urls << page.uri if feed_content_type? or is_feed?
-      urls.concat feed_attributes.map {|attribute| attribute["href"] }
+      urls << url if (has_feed_mime_type? || has_feed_extension?) && xml?
+      urls += links.map {|link| link["href"] }
     end
 
     private
 
-    def is_feed?
-      root.xpath("contains(' feed RDF rss ', concat(' ', local-name(/*), ' '))")
+    def has_xml_declaration?
+      !!body.index("<?xml")
     end
 
-    def feed_content_type?
-      content_type = page.response["content-type"]
-      content_type.is_a? String and MIME_TYPES.has_value? content_type.gsub(/;.*$/, "")
+    def has_feed_mime_type?
+      MIME_TYPES.include?(mime_type)
     end
 
-    def feed_extension?
-      path = page.uri.path
-      extension = File.extname(path)
-      MIME_TYPES.has_key? extension
+    def has_feed_extension?
+      EXTENSIONS.include?(extension)
     end
 
-    def feed_attributes
+    def parsable_as_xml?
+      !!xml
+    end
+
+    def xml?
+      has_xml_declaration? && parsable_as_xml?
+    end
+
+    def url
+      page.uri.to_s
+    end
+
+    def content_type
+      page.response["content-type"]
+    end
+
+    def mime_type
+      content_type.sub(/;.*\z/, "") if content_type
+    end
+
+    def extension
+      File.extname(page.uri.path).sub(/^\./, "")
+    end
+
+    def body
+      page.body
+    end
+
+    def links
       root.xpath("//link[@rel='alternate' and (#{types_query})]")
     end
 
     def types_query
-      MIME_TYPES.map {|_, type| "@type='#{type}'" }.join(" or ")
+      MIME_TYPES.map {|type| "@type='#{type}'" }.join(" or ")
     end
 
     def root
-      xml = nil
-      body = page.body
-      if body =~ /\A<\?xml\s/ or feed_content_type? or feed_extension?
-        xml = Nokogiri.XML(body) do |config|
-          config.options = Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NOENT
-        end rescue nil
+      xml || html
+    end
+
+    def xml
+      if @xml.nil?
+        @xml = parse_xml
+      else
+        @xml
       end
-      xml or Nokogiri.HTML(body)
+    end
+
+    def html
+      Nokogiri.HTML(body)
+    end
+
+    def parse_xml
+      Nokogiri.XML(body) do |config|
+        config.options = Nokogiri::XML::ParseOptions::STRICT | Nokogiri::XML::ParseOptions::NOENT
+      end
+    rescue
+      false
     end
   end
 end

@@ -22,7 +22,8 @@ Let me explain how FeedSearcher works along its execution sequence.
 1. Fetches the HTML source of the given URL
 2. Finds link elements (represented as XPath format)
 3. Extracts URLs from the elements via its `href` attribute
-4. Converts to absolute path if it is relative path
+4. Include the given URL if its resource itself is a feed
+5. Converts to relative path to absolute path
 
 FeedSearcher finds link elements matcing following XPath patterns.
 
