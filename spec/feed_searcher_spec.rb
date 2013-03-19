@@ -8,12 +8,12 @@ describe FeedSearcher do
       )
 
       stub_request(:get, "http://example.com/3").to_return(
-        :content_type => 'application/rss+xml; charset=UTF-8',
+        :headers => {'Content-Type' => 'application/rss+xml; charset=UTF-8'},
         :body => open(File.expand_path(File.join(File.dirname(__FILE__), "fixtures", "example.rss"))).read
       )
 
       stub_request(:get, "http://example.com/1").to_return(
-        :content_type => 'text/plain',
+        :headers => {'Content-Type' => 'text/plain'},
         :body => open(File.expand_path(File.join(File.dirname(__FILE__), "fixtures", "example.atom"))).read
       )
     end
