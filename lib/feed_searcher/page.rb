@@ -20,14 +20,14 @@ class FeedSearcher
 
     def feed_urls
       urls = []
-      urls << url if (has_feed_mime_type? || has_feed_extension?) && xml?
+      urls << url if like_xml? && parsable_as_xml? && has_feed_element?
       urls += links.map {|link| link["href"] }
     end
 
     private
 
     def has_xml_declaration?
-      !!body.index("<?xml")
+      !!body.start_with?("<?xml")
     end
 
     def has_feed_mime_type?
@@ -38,12 +38,16 @@ class FeedSearcher
       EXTENSIONS.include?(extension)
     end
 
+    def has_feed_element?
+      !!root.xpath("feed|RDF|rss")
+    end
+
     def parsable_as_xml?
       !!xml
     end
 
-    def xml?
-      has_xml_declaration? && parsable_as_xml?
+    def like_xml?
+      has_xml_declaration? || has_feed_mime_type? || has_feed_extension?
     end
 
     def url
