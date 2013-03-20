@@ -1,7 +1,5 @@
-# FeedSearcher
+# FeedSearcher [![Build Status](https://travis-ci.org/fastladder/feed_searcher.png?branch=master)](https://travis-ci.org/fastladder/feed_searcher) [![Code Climate](https://codeclimate.com/github/fastladder/feed_searcher.png)](https://codeclimate.com/github/fastladder/feed_searcher) [![Coverage Status](https://coveralls.io/repos/fastladder/feed_searcher/badge.png?branch=master)](https://coveralls.io/r/fastladder/feed_searcher)
 Search RSS feed URLs from the given URL.
-
-[![Build Status](https://travis-ci.org/fastladder/feed_searcher.png?branch=master)](https://travis-ci.org/fastladder/feed_searcher)
 
 
 ## Installation
