@@ -133,31 +133,22 @@ describe FeedSearcher do
       end
     end
 
-    context "when the specified resource is XHTML" do
+    context "when the specified resource is P3P" do
       before do
-        stub_request(:get, "http://example.com/").to_return(
+        stub_request(:get, "http://example.com/p3p.xml").to_return(
           :headers => { "Content-Type" => "application/xhtml+xml" },
           :body => <<-EOS.strip_heredoc
             <?xml version="1.0" encoding="UTF-8"?>
-            <?xml-stylesheet href="/assets/application.css" type="text/css"?>
-            <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
-            <html xmlns="http://www.w3.org/1999/xhtml">
-              <head>
-                <link href="http://example.com/1" rel="alternate" type="application/atom+xml"/>
-                <link href="http://example.com/2" rel="alternate" type="application/rdf+xml"/>
-                <link href="http://example.com/3" rel="alternate" type="application/rss+xml"/>
-                <title>title</title>
-              </head>
-              <body>
-                <p>body</p>
-              </body>
-            </html>
+            <META xmlns="http://www.w3.org/2002/01/P3Pv1">
+              <POLICY-REFERENCES>
+              </POLICY-REFERENCES>
+            </META>
           EOS
         )
       end
 
       it "return an empty Array" do
-        FeedSearcher.search("http://example.com/").should == %w[
+        FeedSearcher.search("http://example.com/p3p.xml").should == %w[
         ]
       end
     end
