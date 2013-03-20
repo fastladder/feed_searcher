@@ -39,7 +39,7 @@ class FeedSearcher
     end
 
     def has_feed_element?
-      !!root.xpath("feed|RDF|rss")
+      root.xpath("contains(' feed RDF rss ', concat(' ', local-name(/*), ' '))")
     end
 
     def parsable_as_xml?
