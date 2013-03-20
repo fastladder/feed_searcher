@@ -3,7 +3,7 @@ require "active_support/core_ext/string/strip"
 
 describe FeedSearcher do
   describe ".search" do
-    context "when the specified resource is HTML" do
+    context "when there are link elements of feeds in the resource" do
       before do
         stub_request(:get, "http://example.com/").to_return(
           :body => <<-EOS.strip_heredoc
@@ -38,7 +38,7 @@ describe FeedSearcher do
       #   * it keeps other domain
       #   * it converts relative path to absolute url
       #
-      it "returns feed URLs from link elements in the specified resource" do
+      it "includes hrefs of them as feed URLs" do
         FeedSearcher.search("http://example.com/").should == %w[
           http://example.com/1
           http://example.com/2
@@ -50,7 +50,7 @@ describe FeedSearcher do
       end
     end
 
-    context "with feed MIME type and parsable XML and rss element" do
+    context "when the resource has feed MIME type and parsable XML and rss element" do
       before do
         stub_request(:get, "http://example.com/").to_return(
           :headers => { "Content-Type" => "application/rss+xml; charset=UTF-8" },
@@ -70,14 +70,14 @@ describe FeedSearcher do
         )
       end
 
-      it "returns itself as a feed url" do
+      it "includes the given URL as a feed URL" do
         FeedSearcher.search("http://example.com/").should == %w[
           http://example.com/
         ]
       end
     end
 
-    context "with XML declaration and parsable XML and rss element" do
+    context "when the resource has XML declaration and parsable XML and rss element" do
       before do
         stub_request(:get, "http://example.com/").to_return(
           :body    => <<-EOS.strip_heredoc
@@ -97,14 +97,14 @@ describe FeedSearcher do
         )
       end
 
-      it "returns itself as a feed url" do
+      it "includes the given URL as a feed URL" do
         FeedSearcher.search("http://example.com/").should == %w[
           http://example.com/
         ]
       end
     end
 
-    context "with feed extension and parsable XML and feed element" do
+    context "when the resource has feed extension and parsable XML and feed element" do
       before do
         stub_request(:get, "http://example.com/feed.atom").to_return(
           :body => <<-EOS.strip_heredoc
@@ -126,14 +126,14 @@ describe FeedSearcher do
         )
       end
 
-      it "returns itself as a feed url" do
+      it "includes the given URL as a feed URL" do
         FeedSearcher.search("http://example.com/feed.atom").should == %w[
           http://example.com/feed.atom
         ]
       end
     end
 
-    context "when the specified resource is P3P" do
+    context "when the resource has XML declaration and parsable XML and no feed element" do
       before do
         stub_request(:get, "http://example.com/p3p.xml").to_return(
           :headers => { "Content-Type" => "application/xhtml+xml" },
@@ -147,7 +147,7 @@ describe FeedSearcher do
         )
       end
 
-      it "return an empty Array" do
+      it "does not includes the given URL as a feed URL" do
         FeedSearcher.search("http://example.com/p3p.xml").should == %w[
         ]
       end
