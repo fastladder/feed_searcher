@@ -132,5 +132,25 @@ describe FeedSearcher do
         ]
       end
     end
+
+    context "when the specified resource is P3P" do
+      before do
+        stub_request(:get, "http://example.com/p3p.xml").to_return(
+          :headers => { "Content-Type" => "application/xhtml+xml" },
+          :body => <<-EOS.strip_heredoc
+            <?xml version="1.0" encoding="UTF-8"?>
+            <META xmlns="http://www.w3.org/2002/01/P3Pv1">
+              <POLICY-REFERENCES>
+              </POLICY-REFERENCES>
+            </META>
+          EOS
+        )
+      end
+
+      it "return an empty Array" do
+        FeedSearcher.search("http://example.com/p3p.xml").should == %w[
+        ]
+      end
+    end
   end
 end
