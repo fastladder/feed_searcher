@@ -31,7 +31,7 @@ class FeedSearcher
     end
 
     def has_feed_mime_type?
-      MIME_TYPES.include?(mime_type)
+      MIME_TYPES.include?(mime_type) || %w[text/xml].include?(mime_type)
     end
 
     def has_feed_extension?
