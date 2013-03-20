@@ -71,7 +71,7 @@ class FeedSearcher
     end
 
     def links
-      root.xpath("//link[@rel='alternate' and (#{types_query})]")
+      root.xpath("//*[local-name()='link' and @rel='alternate' and (#{types_query})]")
     end
 
     def types_query

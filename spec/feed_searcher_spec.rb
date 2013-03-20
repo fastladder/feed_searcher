@@ -152,5 +152,37 @@ describe FeedSearcher do
         ]
       end
     end
+
+    context "when the parsable XML resource dosen't have feed MIME type and rss element" do
+      before do
+        stub_request(:get, "http://example.com/").to_return(
+          :headers => { "Content-Type" => "application/xhtml+xml" },
+          :body => <<-EOS.strip_heredoc
+            <?xml version="1.0" encoding="UTF-8"?>
+            <?xml-stylesheet href="/assets/application.css" type="text/css"?>
+            <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+            <html xmlns="http://www.w3.org/1999/xhtml">
+              <head>
+                <link href="http://example.com/1" rel="alternate" type="application/atom+xml"/>
+                <link href="http://example.com/2" rel="alternate" type="application/rdf+xml"/>
+                <link href="http://example.com/3" rel="alternate" type="application/rss+xml"/>
+                <title>title</title>
+              </head>
+              <body>
+                <p>body</p>
+              </body>
+            </html>
+          EOS
+        )
+      end
+
+      it "includes hrefs of them as feed URLs" do
+        FeedSearcher.search("http://example.com/").should == %w[
+          http://example.com/1
+          http://example.com/2
+          http://example.com/3
+        ]
+      end
+    end
   end
 end
