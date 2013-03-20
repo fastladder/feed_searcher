@@ -50,10 +50,36 @@ describe FeedSearcher do
       end
     end
 
-    context "when the specified resource has feed MIME type and be parsable as XML" do
+    context "with feed MIME type and parsable XML and rss element" do
       before do
         stub_request(:get, "http://example.com/").to_return(
           :headers => { "Content-Type" => "application/rss+xml; charset=UTF-8" },
+          :body    => <<-EOS.strip_heredoc
+            <rss>
+              <channel>
+                <title>title</title>
+                <link>http://exmple.com/</link>
+                <item>
+                  <title>item title</title>
+                  <link>http://example.com/item</link>
+                  <description>item description</description>
+                </item>
+              </channel>
+            </rss>
+          EOS
+        )
+      end
+
+      it "returns itself as a feed url" do
+        FeedSearcher.search("http://example.com/").should == %w[
+          http://example.com/
+        ]
+      end
+    end
+
+    context "with XML declaration and parsable XML and rss element" do
+      before do
+        stub_request(:get, "http://example.com/").to_return(
           :body    => <<-EOS.strip_heredoc
             <?xml version="1.0" encoding="UTF-8"?>
             <rss>
@@ -78,11 +104,10 @@ describe FeedSearcher do
       end
     end
 
-    context "when the specified resource has feed extension and be parsable as XML" do
+    context "with feed extension and parsable XML and feed element" do
       before do
         stub_request(:get, "http://example.com/feed.atom").to_return(
           :body => <<-EOS.strip_heredoc
-            <?xml version="1.0" encoding="UTF-8"?>
             <feed xmlns="http://www.w3.org/2005/Atom">
               <title>title</title>
               <link rel="self" href="http://example.com/1"/>
