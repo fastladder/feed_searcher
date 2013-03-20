@@ -51,7 +51,7 @@ describe FeedSearcher do
     end
 
     context "when the specified resource has feed MIME type and be parsable as XML" do
-      before do
+      it "returns itself as a feed url" do
         stub_request(:get, "http://example.com/").to_return(
           :headers => { "Content-Type" => "application/rss+xml; charset=UTF-8" },
           :body    => <<-EOS.strip_heredoc
@@ -69,12 +69,22 @@ describe FeedSearcher do
             </rss>
           EOS
         )
-      end
-
-      it "returns itself as a feed url" do
         FeedSearcher.search("http://example.com/").should == %w[
           http://example.com/
         ]
+      end
+
+      it "should detect Google alert feed" do
+        url = "http://example.com/alerts/feeds/0123456/7890123"
+        stub_request(:get, url).to_return(
+          :headers => { "Content-Type" => "text/xml; charset=UTF-8" },
+          :body => <<-EOS.strip_heredoc
+            <?xml version="1.0"?>
+            <feed xmlns:media="http://search.yahoo.com/mrss/" xmlns:gr="http://www.google.com/schemas/reader/atom/" xmlns:idx="urn:atom-extension:indexing" xmlns="http://www.w3.org/2005/Atom" idx:index="no" gr:dir="ltr">
+            </feed>
+          EOS
+        )
+        FeedSearcher.search(url).should == [url]
       end
     end
 
