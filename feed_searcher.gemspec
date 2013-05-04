@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["r7kamura@gmail.com"]
   spec.description   = "FeedSearcher searches RSS feed URLs from the given URL."
   spec.summary       = "Search RSS feed URLs from the given URL"
-  spec.homepage      = "https://github.com/r7kamura/feed_searcher"
+  spec.homepage      = "https://github.com/fastladder/feed_searcher"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files`.split($/)
