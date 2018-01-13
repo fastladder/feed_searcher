@@ -10,6 +10,7 @@ class FeedSearcher
       application/atom+xml
       application/rdf+xml
       application/rss+xml
+      application/xml
     ]
 
     attr_reader :page
