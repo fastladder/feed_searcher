@@ -39,14 +39,14 @@ describe FeedSearcher do
       #   * it converts relative path to absolute url
       #
       it "includes hrefs of them as feed URLs" do
-        FeedSearcher.search("http://example.com/").should == %w[
+        expect(FeedSearcher.search("http://example.com/")).to eq(%w[
           http://example.com/1
           http://example.com/2
           http://example.com/3
           http://www.example.com/6
           http://other-example.com/7
           http://example.com/8
-        ]
+        ])
       end
     end
 
@@ -71,7 +71,7 @@ describe FeedSearcher do
       end
 
       it "includes the given URL as a feed URL" do
-        FeedSearcher.search("http://example.com/").should == %w[
+        expect(FeedSearcher.search("http://example.com/")).to eq %w[
           http://example.com/
         ]
       end
@@ -98,7 +98,7 @@ describe FeedSearcher do
       end
 
       it "includes the given URL as a feed URL" do
-        FeedSearcher.search("http://example.com/").should == %w[
+        expect(FeedSearcher.search("http://example.com/")).to eq %w[
           http://example.com/
         ]
       end
@@ -127,7 +127,7 @@ describe FeedSearcher do
       end
 
       it "includes the given URL as a feed URL" do
-        FeedSearcher.search("http://example.com/feed.atom").should == %w[
+        expect(FeedSearcher.search("http://example.com/feed.atom")).to eq %w[
           http://example.com/feed.atom
         ]
       end
@@ -148,7 +148,7 @@ describe FeedSearcher do
       end
 
       it "does not includes the given URL as a feed URL" do
-        FeedSearcher.search("http://example.com/p3p.xml").should == %w[
+        expect(FeedSearcher.search("http://example.com/p3p.xml")).to eq %w[
         ]
       end
     end
@@ -177,7 +177,7 @@ describe FeedSearcher do
       end
 
       it "includes hrefs of them as feed URLs" do
-        FeedSearcher.search("http://example.com/").should == %w[
+        expect(FeedSearcher.search("http://example.com/")).to eq %w[
           http://example.com/1
           http://example.com/2
           http://example.com/3
