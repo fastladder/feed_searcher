@@ -3,6 +3,29 @@ require "active_support/core_ext/string/strip"
 
 describe FeedSearcher do
   describe ".search" do
+    it 'can subscribe to a feed of bokuyaba' do
+      stub_request(:get, "https://championcross.jp/series/899dda204c3f2/rss").to_return(body: <<~EOS
+        <rss xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:webfeeds="http://webfeeds.org/rss/1.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:media="http://search.yahoo.com/mrss/" version="2.0">
+        <channel>
+          <title>僕の心のヤバイやつ【最新話無料】</title>
+          <link>https://championcross.jp/series/899dda204c3f2</link>
+          <atom:link rel="self" type="application/rss+xml" href="https://championcross.jp/series/899dda204c3f2/rss"/>
+          <copyright>僕の心のヤバイやつ【最新話無料】</copyright>
+          <webfeeds:icon>https://cdn-public.comici.jp/series/2/20240514165016604FC0B8E1EB60C6CC81C01AEC9EDC89401.png</webfeeds:icon>
+          <webfeeds:logo>https://cdn-public.comici.jp/series/2/20240514165016604FC0B8E1EB60C6CC81C01AEC9EDC89401.png</webfeeds:logo>
+          <webfeeds:accentColor>D80C24</webfeeds:accentColor>
+          <webfeeds:related layout="card" target="browser"/>
+          <webfeeds:analytics id="UA-114502607-1" engine="GoogleAnalytics"/>
+          <language>ja</language>
+          <pubDate>Tue, 09 Jul 2024 08:59:52 +0900</pubDate>
+          <lastBuildDate>Tue, 09 Jul 2024 08:59:52 +0900</lastBuildDate>
+        </channel>
+        </rss>
+      EOS
+      )
+      expect(FeedSearcher.search('https://championcross.jp/series/899dda204c3f2/rss').count).to eq 1
+    end
+
     context "when there are link elements of feeds in the resource" do
       before do
         stub_request(:get, "http://example.com/").to_return(
