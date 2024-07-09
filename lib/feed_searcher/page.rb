@@ -20,7 +20,8 @@ class FeedSearcher
 
     def feed_urls
       urls = []
-      urls << url if like_xml? && parsable_as_xml? && has_feed_element?
+      urls << url if like_xml? && parsable_as_xml? && has_feed_element? 
+      urls << url if has_rss_element? && has_feed_element? && parsable_as_xml? && !urls.include?(url)
       urls += links.map {|link| link["href"] }
     end
 
@@ -28,6 +29,10 @@ class FeedSearcher
 
     def has_xml_declaration?
       !!body.start_with?("<?xml")
+    end
+
+    def has_rss_element?
+      !!root.xpath("//*[local-name()='rss']")
     end
 
     def has_feed_mime_type?
